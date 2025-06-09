@@ -1,205 +1,203 @@
-create database bd_berpi;
-use bd_collaborax;
+CREATE DATABASE bd_nuevax;
+USE bd_nuevax;
 
-create table archivos (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nombre varchar(255) NOT NULL,
-  ruta varchar(255) NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL
+CREATE TABLE documentos (
+  doc_id INT PRIMARY KEY AUTO_INCREMENT,
+  titulo VARCHAR(255) NOT NULL,
+  ubicacion VARCHAR(255) NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL
 );
 
-create table roles (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NOT NULL,
-  activo tinyint(1) NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL
+CREATE TABLE permisos (
+  permiso_id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre_permiso VARCHAR(255) NOT NULL,
+  descripcion_permiso VARCHAR(255) NOT NULL,
+  estado TINYINT(1) NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL
 );
 
-create table usuarios (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  correo varchar(255) UNIQUE NOT NULL,
-  correo_personal varchar(255) UNIQUE NOT NULL,
-  clave varchar(255) NOT NULL,
-  rol_id INT NOT NULL,
+CREATE TABLE usuarios_app (
+  usuario_id INT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  email_personal VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  permiso_id INT NOT NULL,
   activo TINYINT(1) NOT NULL DEFAULT 1,
-  en_linea tinyint(1) NOT NULL,
-  ultima_conexion TIMESTAMP NULL,
-  foto INT NULL,
+  conectado TINYINT(1) NOT NULL,
+  ultima_visita TIMESTAMP NULL,
+  foto_id INT NULL,
   fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  clave_mostrar varchar(255) NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (rol_id) REFERENCES roles(id),
-  FOREIGN KEY (foto) REFERENCES archivos(id)
+  clave_visible VARCHAR(255) NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (permiso_id) REFERENCES permisos(permiso_id),
+  FOREIGN KEY (foto_id) REFERENCES documentos(doc_id)
 );
 
-
-
-create table plan_servicios (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nombre varchar(255),
-  beneficios TEXT,
-  costo_soles double NOT NULL,
-  cant_usuarios INT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL
+CREATE TABLE planes_servicio (
+  plan_id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre_plan VARCHAR(255),
+  descripcion_beneficios TEXT,
+  costo_moneda DOUBLE NOT NULL,
+  usuarios_permitidos INT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL
 );
 
-create table empresas(
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE organizaciones (
+  organizacion_id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT NOT NULL,
-  plan_servicio_id INT NOT NULL,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  ruc varchar(255) NOT NULL,
-  telefono varchar (255) NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-  FOREIGN KEY (plan_servicio_id) REFERENCES plan_servicios(id)
+  plan_id INT NOT NULL,
+  nombre_org VARCHAR(255) NOT NULL,
+  descripcion_org VARCHAR(255) NULL,
+  numero_ruc VARCHAR(255) NOT NULL,
+  telefono_org VARCHAR(255) NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios_app(usuario_id),
+  FOREIGN KEY (plan_id) REFERENCES planes_servicio(plan_id)
 );
 
-create table trabajadores (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE empleados (
+  empleado_id INT PRIMARY KEY AUTO_INCREMENT,
   usuario_id INT NOT NULL,
-  empresa_id INT NOT NULL,
-  nombres varchar(255) NOT NULL,
-  apellido_paterno varchar(255) NOT NULL,
-  apellido_materno varchar(255) NOT NULL,
-  doc_identidad varchar(8) NULL,
-  fecha_nacimiento TIMESTAMP NULL,
-  telefono varchar (255) NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-  FOREIGN KEY (empresa_id) REFERENCES empresas(id)
+  organizacion_id INT NOT NULL,
+  nombre_empleado VARCHAR(255) NOT NULL,
+  apellido_paterno VARCHAR(255) NOT NULL,
+  apellido_materno VARCHAR(255) NOT NULL,
+  documento_identidad VARCHAR(8) NULL,
+  fecha_nac TIMESTAMP NULL,
+  telefono_empleado VARCHAR(255) NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios_app(usuario_id),
+  FOREIGN KEY (organizacion_id) REFERENCES organizaciones(organizacion_id)
 );
 
-create table areas (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  empresa_id INT NOT NULL,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  codigo varchar(255) NOT NULL,
-  color varchar(255) NULL,
-  activo tinyint(1) NOT NULL,
-  fecha_creacion TIMESTAMP DEFAULT current_timestamp NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (empresa_id) REFERENCES empresas(id)
+CREATE TABLE departamentos (
+  departamento_id INT PRIMARY KEY AUTO_INCREMENT,
+  organizacion_id INT NOT NULL,
+  nombre_depto VARCHAR(255) NOT NULL,
+  descripcion_depto VARCHAR(255) NULL,
+  codigo_depto VARCHAR(255) NOT NULL,
+  color_depto VARCHAR(255) NULL,
+  activo TINYINT(1) NOT NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (organizacion_id) REFERENCES organizaciones(organizacion_id)
 );
 
-create table equipos (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  coordinador_id INT NOT NULL,
-  area_id INT NOT NULL,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  fecha_creacion TIMESTAMP DEFAULT current_timestamp NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,  
-  FOREIGN KEY (coordinador_id) REFERENCES trabajadores(id),
-  FOREIGN KEY (area_id) REFERENCES areas(id)
+CREATE TABLE equipos_trabajo (
+  equipo_id INT PRIMARY KEY AUTO_INCREMENT,
+  lider_id INT NOT NULL,
+  departamento_id INT NOT NULL,
+  nombre_equipo VARCHAR(255) NOT NULL,
+  descripcion_equipo VARCHAR(255) NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (lider_id) REFERENCES empleados(empleado_id),
+  FOREIGN KEY (departamento_id) REFERENCES departamentos(departamento_id)
 );
 
-create table miembros_equipo (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE miembros_equipo_trabajo (
+  miembro_id INT PRIMARY KEY AUTO_INCREMENT,
   equipo_id INT NOT NULL,
-  trabajador_id INT NOT NULL,
-  fecha_union TIMESTAMP DEFAULT current_timestamp NOT NULL,
-  activo tinyint(1) NOT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id),
-  FOREIGN KEY (trabajador_id) REFERENCES trabajadores(id)
+  empleado_id INT NOT NULL,
+  fecha_union TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  activo TINYINT(1) NOT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (equipo_id) REFERENCES equipos_trabajo(equipo_id),
+  FOREIGN KEY (empleado_id) REFERENCES empleados(empleado_id)
 );
 
-create table estados (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  deleted_at TIMESTAMP DEFAULT NULL
+CREATE TABLE estados_tarea (
+  estado_id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre_estado VARCHAR(255) NOT NULL,
+  descripcion_estado VARCHAR(255) NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL
 );
 
-create table metas (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE objetivos (
+  objetivo_id INT PRIMARY KEY AUTO_INCREMENT,
   equipo_id INT NOT NULL,
   estado_id INT NOT NULL,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  fecha_creacion TIMESTAMP DEFAULT current_timestamp NOT NULL,
-  fecha_entrega TIMESTAMP NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id),
-  FOREIGN KEY (estado_id) REFERENCES estados(id)
+  nombre_objetivo VARCHAR(255) NOT NULL,
+  descripcion_objetivo VARCHAR(255) NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  fecha_limite TIMESTAMP NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (equipo_id) REFERENCES equipos_trabajo(equipo_id),
+  FOREIGN KEY (estado_id) REFERENCES estados_tarea(estado_id)
 );
 
-create table tareas (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  meta_id INT NOT NULL,
+CREATE TABLE tareas (
+  tarea_id INT PRIMARY KEY AUTO_INCREMENT,
+  objetivo_id INT NOT NULL,
   estado_id INT NOT NULL,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  fecha_creacion TIMESTAMP DEFAULT current_timestamp NOT NULL,
+  nombre_tarea VARCHAR(255) NOT NULL,
+  descripcion_tarea VARCHAR(255) NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   fecha_entrega TIMESTAMP NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (meta_id) REFERENCES metas(id),
-  FOREIGN KEY (estado_id) REFERENCES estados(id)
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (objetivo_id) REFERENCES objetivos(objetivo_id),
+  FOREIGN KEY (estado_id) REFERENCES estados_tarea(estado_id)
 );
 
-create table modalidades (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nombre varchar(255) NOT NULL,
-  descripcion varchar(255) NULL,
-  deleted_at TIMESTAMP DEFAULT NULL
+CREATE TABLE tipos_modalidad (
+  modalidad_id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre_modalidad VARCHAR(255) NOT NULL,
+  descripcion_modalidad VARCHAR(255) NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL
 );
 
-create table reuniones (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE reuniones_programadas (
+  reunion_id INT PRIMARY KEY AUTO_INCREMENT,
   equipo_id INT NOT NULL,
-  fecha DATE NOT NULL,
-  hora TIME NULL,
-  duracion int NOT NULL,
-  descripcion varchar(255) NULL,
-  asunto varchar(255) NOT NULL,
+  fecha_reunion DATE NOT NULL,
+  hora_reunion TIME NULL,
+  duracion_minutos INT NOT NULL,
+  descripcion_reunion VARCHAR(255) NULL,
+  asunto_reunion VARCHAR(255) NOT NULL,
   modalidad_id INT NOT NULL,
-  sala varchar(255) NULL,
-  estado varchar(255) NOT NULL default 'PROGRAMADA',
-  observacion varchar(255) NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id),
-  FOREIGN KEY (modalidad_id) REFERENCES modalidades(id)
+  sala_reunion VARCHAR(255) NULL,
+  estado_reunion VARCHAR(255) NOT NULL DEFAULT 'PROGRAMADA',
+  observacion_reunion VARCHAR(255) NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (equipo_id) REFERENCES equipos_trabajo(equipo_id),
+  FOREIGN KEY (modalidad_id) REFERENCES tipos_modalidad(modalidad_id)
 );
 
-create table areas_coordinador (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  area_id INT NOT NULL,
-  trabajador_id INT NOT NULL,
+CREATE TABLE coordinadores_departamento (
+  coord_id INT PRIMARY KEY AUTO_INCREMENT,
+  departamento_id INT NOT NULL,
+  empleado_id INT NOT NULL,
   fecha_inicio TIMESTAMP NOT NULL,
   fecha_fin TIMESTAMP NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (area_id) REFERENCES areas(id),
-  FOREIGN KEY (trabajador_id) REFERENCES trabajadores(id)
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (departamento_id) REFERENCES departamentos(departamento_id),
+  FOREIGN KEY (empleado_id) REFERENCES empleados(empleado_id)
 );
 
-create table invitaciones (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE invitaciones_equipo (
+  invitacion_id INT PRIMARY KEY AUTO_INCREMENT,
   equipo_id INT NOT NULL,
-  trabajador_id INT NOT NULL,
-  fecha_invitacion TIMESTAMP DEFAULT current_timestamp,
+  empleado_id INT NOT NULL,
+  fecha_invitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_expiracion TIMESTAMP NULL,
   fecha_respuesta TIMESTAMP NULL,
-  estado varchar(255) NOT NULL DEFAULT 'PENDIENTE',
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (equipo_id) REFERENCES equipos(id),
-  FOREIGN KEY (trabajador_id) REFERENCES trabajadores(id)
+  estado_invitacion VARCHAR(255) NOT NULL DEFAULT 'PENDIENTE',
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (equipo_id) REFERENCES equipos_trabajo(equipo_id),
+  FOREIGN KEY (empleado_id) REFERENCES empleados(empleado_id)
 );
 
-create table mensajes (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE mensajes_equipo (
+  mensaje_id INT PRIMARY KEY AUTO_INCREMENT,
   remitente_id INT NOT NULL,
   destinatario_id INT NOT NULL,
-  contenido TEXT NOT NULL,
-  fecha DATE NOT NULL,
-  hora TIME NOT NULL,
-  leido tinyint(1) NOT NULL,
-  archivo_id INT NULL,
-  deleted_at TIMESTAMP DEFAULT NULL,
-  FOREIGN KEY (remitente_id) REFERENCES trabajadores(id),
-  FOREIGN KEY (destinatario_id) REFERENCES trabajadores(id),
-  FOREIGN KEY (archivo_id) REFERENCES archivos(id)
+  contenido_mensaje TEXT NOT NULL,
+  fecha_mensaje DATE NOT NULL,
+  hora_mensaje TIME NOT NULL,
+  leido TINYINT(1) NOT NULL,
+  documento_id INT NULL,
+  eliminado_en TIMESTAMP DEFAULT NULL,
+  FOREIGN KEY (remitente_id) REFERENCES empleados(empleado_id),
+  FOREIGN KEY (destinatario_id) REFERENCES empleados(empleado_id),
+  FOREIGN KEY (documento_id) REFERENCES documentos(doc_id)
 );
