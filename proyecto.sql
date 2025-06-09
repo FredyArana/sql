@@ -1,4 +1,4 @@
-create database bd_collaborax;
+create database bd_berpi;
 use bd_collaborax;
 
 create table archivos (
