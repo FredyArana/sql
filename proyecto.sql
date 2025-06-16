@@ -1,4 +1,4 @@
-CREATE DATABASE bd_nuevax;
+CREATE DATABASE bd_bberpi;
 USE bd_berpi;
 
 CREATE TABLE documentos (
