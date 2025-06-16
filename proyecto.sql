@@ -1,5 +1,5 @@
 CREATE DATABASE bd_nuevax;
-USE bd_nuevax;
+USE bd_berpi;
 
 CREATE TABLE documentos (
   doc_id INT PRIMARY KEY AUTO_INCREMENT,
