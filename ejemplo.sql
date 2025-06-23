@@ -1,6 +1,6 @@
 -- Crear la base de datos
-CREATE DATABASE IF NOT EXISTS examen;
-USE examen;
+CREATE DATABASE IF NOT EXISTS examen1;
+USE examen1;
 
 -- Crear la tabla provincia
 CREATE TABLE provincia (
@@ -32,6 +32,6 @@ CREATE TABLE datos (
 -- Insertar datos en la tabla datos
 INSERT INTO datos (id, dni, nombre, ap_paterno, ap_materno, fecnac, provincia_id, direccion)
 VALUES
-  (1, '71093594', 'fredy', 'arana', 'manrique', '2002-05-02', 1, 'La libertad 352'),
-  (2, '123456', 'gerardo', 'aguilar', 'cacio', '2012-09-07', 2, 'Av garatea'),
-  (3, '71093594', 'frank', 'romero', 'castillo', '2015-03-08', 3, 'Av argentina');
+  (1, '71093594', 'fredy', 'arana', 'manrique', '2002-05-02', 1, 'Chimbote'),
+  (2, '123456', 'gerardo', 'aguilar', 'cacio', '2012-09-07', 2, 'Casma'),
+  (3, '71093594', 'frank', 'romero', 'castillo', '2015-03-08', 3, 'Nuevo Chimbote');
