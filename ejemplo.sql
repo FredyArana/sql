@@ -6,16 +6,15 @@ USE examen;
 CREATE TABLE provincia (
   id INT PRIMARY KEY,
   codigo VARCHAR(10),
-  nombre VARCHAR(100),
-  direccion VARCHAR(150)
+  nombre VARCHAR(100)
 );
 
 -- Insertar datos en la tabla provincia
-INSERT INTO provincia (id, codigo, nombre, direccion)
+INSERT INTO provincia (id, codigo, nombre)
 VALUES
-  (1, '0123', 'Santa', 'Av. Perú 123'),
-  (2, '0456', 'Samanco', 'Calle Bolívar 456'),
-  (3, '012', 'Moro', 'Jr. Lima 789');
+  (1, '0123', 'Santa'),
+  (2, '0456', 'Samanco'),
+  (3, '012', 'Moro');
 
 -- Crear la tabla datos
 CREATE TABLE datos (
