@@ -1,31 +1,35 @@
 -- Crear la base de datos
-CREATE DATABASE recupera;
+CREATE DATABASE IF NOT EXISTS recupera1;
+USE recupera;
 
 -- Tabla padre
 CREATE TABLE Origen (
-  OrigenID STRING(36) NOT NULL,
-  Procedencia STRING(50),
-  Actividad STRING(50) -- Estudia o Trabaja
-) PRIMARY KEY (OrigenID);
+  OrigenID VARCHAR(36) NOT NULL,
+  Procedencia VARCHAR(50),
+  Actividad VARCHAR(50),
+  PRIMARY KEY (OrigenID)
+);
 
 -- Tabla hija
 CREATE TABLE Persona (
-  OrigenID STRING(36) NOT NULL,
-  PersonaID STRING(36) NOT NULL,
-  Nombre STRING(50),
-  Edad INT64,
+  OrigenID VARCHAR(36) NOT NULL,
+  PersonaID VARCHAR(36) NOT NULL,
+  Nombre VARCHAR(50),
+  Edad INT,
   FechaNacimiento DATE,
-  EdadDoble INT64 AS (Edad * 2) STORED
-) PRIMARY KEY (OrigenID, PersonaID),
-  INTERLEAVE IN PARENT Origen ON DELETE CASCADE;
+  EdadDoble INT GENERATED ALWAYS AS (Edad * 2) STORED,
+  PRIMARY KEY (OrigenID, PersonaID),
+  FOREIGN KEY (OrigenID) REFERENCES Origen(OrigenID)
+);
 
 -- Tabla multivalorada
 CREATE TABLE Intereses (
-  OrigenID STRING(36) NOT NULL,
-  PersonaID STRING(36) NOT NULL,
-  Interes STRING(50) NOT NULL
-) PRIMARY KEY (OrigenID, PersonaID, Interes),
-  INTERLEAVE IN PARENT Persona ON DELETE CASCADE;
+  OrigenID VARCHAR(36) NOT NULL,
+  PersonaID VARCHAR(36) NOT NULL,
+  Interes VARCHAR(50) NOT NULL,
+  PRIMARY KEY (OrigenID, PersonaID, Interes),
+  FOREIGN KEY (OrigenID, PersonaID) REFERENCES Persona(OrigenID, PersonaID)
+);
 
 -- Insertar en Origen
 INSERT INTO Origen (OrigenID, Procedencia, Actividad) VALUES
